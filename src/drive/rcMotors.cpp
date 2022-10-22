@@ -1,6 +1,9 @@
 #include "robot-config.h"
 using namespace vex;
 
+/* module to drive motors based on pre-set values
+   selected by rc button press */
+
 //rc_motors_rev.cpp
 
 int main() {
