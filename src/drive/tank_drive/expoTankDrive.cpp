@@ -11,11 +11,11 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
-#include "tankDrive.h"
+#include "expoTankDrive.h"
 using namespace vex;
 
 //tank drive function
-int tankDrive_f(){
+int expoTankDrive_f(){
 
   // declare count variable for iteration count
   int count = 0;
