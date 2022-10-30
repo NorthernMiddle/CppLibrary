@@ -1,0 +1,355 @@
+/*----------------------------------------------------------------------------*/
+/*                                                                            */
+/*    Module:       main.cpp                                                  */
+/*    Author:       C:\Users\jacks                                            */
+/*    Created:      Wed Jun 26 2019                                           */
+/*    Description:  V5 project                                                */
+/*                                                                            */
+/*----------------------------------------------------------------------------*/
+#include "vex.h"
+#include <iostream>
+
+using namespace vex;
+using std::cout;
+using std::endl;
+
+// A global instance of vex::brain used for printing to the V5 brain screen
+vex::brain       Brain;
+
+// A global instance of vex::competition
+vex::competition Competition;
+
+// define your global instances of motors and other devices here
+vex::motor LeftDrive1 = vex::motor(vex::PORT20);
+vex::motor LeftDrive2 = vex::motor(vex::PORT10);
+vex::motor RightDrive1 = vex::motor(vex::PORT1, true);
+vex::motor RightDrive2 = vex::motor(vex::PORT19, true);
+vex::motor Tray = vex::motor(vex::PORT18);
+vex::motor Arm = vex::motor(vex::PORT7, gearSetting::ratio36_1, true);
+vex::motor Intake = vex::motor(vex::PORT8, true);
+vex::motor Intake2 = vex::motor(vex::PORT9);
+vex::controller Controller1 = vex::controller();
+
+int loopNumber;
+bool upPressed = false;
+bool downPressed = false;
+bool startedRecordingTimer = false;
+bool startedRecording = false;
+
+void startRerun() {
+  if(upPressed == false) {
+  Brain.resetTimer();
+  startedRecordingTimer = true;
+  upPressed = true;
+  }
+}
+
+void stopRecording() {
+  if(startedRecording == true) {
+  downPressed = true;
+  startedRecording = false;
+  }
+}
+
+bool driveTrainReversed = false;
+
+void changeDrive() {
+  driveTrainReversed = !driveTrainReversed;
+}
+
+void stopAllMotors() {
+  LeftDrive1.stop(brakeType::brake);
+  LeftDrive2.stop(brakeType::brake);
+  RightDrive1.stop(brakeType::brake);
+  RightDrive2.stop(brakeType::brake);
+  task::sleep(1);
+}
+
+void forward(float inchD, int speed) {
+  float distance = (inchD * 27);
+  LeftDrive1.rotateFor(distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  LeftDrive2.rotateFor(distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  RightDrive1.rotateFor(distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  RightDrive2.rotateFor(distance, rotationUnits::deg, speed, velocityUnits::pct);
+  task::sleep(1);
+  stopAllMotors();
+}
+
+void reverse(float inchD, int speed) {
+  float distance = (inchD * 27);
+  LeftDrive1.rotateFor(-distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  LeftDrive2.rotateFor(-distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  RightDrive1.rotateFor(-distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  RightDrive2.rotateFor(-distance, rotationUnits::deg, speed, velocityUnits::pct);
+  task::sleep(1);
+  stopAllMotors();
+}
+
+void turnLeft(float inchD, int speed) {
+  float distance = (inchD * 27);
+  LeftDrive1.rotateFor(-distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  LeftDrive2.rotateFor(-distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  RightDrive1.rotateFor(distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  RightDrive2.rotateFor(distance, rotationUnits::deg, speed, velocityUnits::pct);
+  task::sleep(1);
+  stopAllMotors();
+}
+
+void turnRight(float inchD, int speed) {
+  float distance = (inchD * 27);
+  LeftDrive1.rotateFor(distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  LeftDrive2.rotateFor(distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  RightDrive1.rotateFor(-distance, rotationUnits::deg, speed, velocityUnits::pct, false);
+  RightDrive2.rotateFor(-distance, rotationUnits::deg, speed, velocityUnits::pct);
+  task::sleep(1);
+  stopAllMotors();
+}
+
+/*---------------------------------------------------------------------------*/
+/*                          Pre-Autonomous Functions                         */
+/*                                                                           */
+/*  You may want to perform some actions before the competition starts.      */
+/*  Do them in the following function.  You must return from this function   */
+/*  or the autonomous and usercontrol tasks will not be started.  This       */
+/*  function is only called once after the cortex has been powered on and    */ 
+/*  not every time that the robot is disabled.                               */
+/*---------------------------------------------------------------------------*/
+
+void pre_auton( void ) {
+  // All activities that occur before the competition starts
+  // Example: clearing encoders, setting servo positions, ...
+}
+
+/*---------------------------------------------------------------------------*/
+/*                                                                           */
+/*                              Autonomous Task                              */
+/*                                                                           */
+/*  This task is used to control your robot during the autonomous phase of   */
+/*  a VEX Competition.                                                       */
+/*                                                                           */
+/*  You must modify the code to add your own robot specific commands here.   */
+/*---------------------------------------------------------------------------*/
+
+void autonomous( void ) {
+	// 11.7 inches for a 90 degree turn
+
+    // Set the motors to brake
+	LeftDrive1.setStopping(brakeType::brake);
+	LeftDrive2.setStopping(brakeType::brake);
+	RightDrive1.setStopping(brakeType::brake);
+	RightDrive2.setStopping(brakeType::brake);
+
+	// go forwards for 50 inches
+	forward(50, 85);
+	task::sleep(250);
+
+	// turn left
+	turnLeft(11.7, 50);
+}
+
+/*---------------------------------------------------------------------------*/
+/*                                                                           */
+/*                              User Control Task                            */
+/*                                                                           */
+/*  This task is used to control your robot during the user control phase of */
+/*  a VEX Competition.                                                       */
+/*                                                                           */
+/*  You must modify the code to add your own robot specific commands here.   */
+/*---------------------------------------------------------------------------*/
+
+void usercontrol( void ) {
+  Controller1.ButtonA.pressed(changeDrive);
+
+  Controller1.ButtonUp.pressed(startRerun);
+  Controller1.ButtonDown.pressed(stopRecording);
+  
+  
+  while (true) {
+    // This is the main execution loop for the user control program.
+    // Each time through the loop your program should update motor + servo 
+    // values based on feedback from the joysticks.
+  
+  uint32_t recordingTime = Brain.timer(timeUnits::msec);
+  Brain.Screen.clearScreen();
+  Brain.Screen.printAt(3, 80, "Timer: %d", recordingTime);
+  Brain.Screen.printAt(3, 100, "Pressed: %d", upPressed);
+  Brain.Screen.printAt(3, 120, "Recording: %d", startedRecording);
+
+  // Motor brake type
+  LeftDrive1.setStopping(brakeType::coast);
+  LeftDrive2.setStopping(brakeType::coast);
+  RightDrive1.setStopping(brakeType::coast);
+  RightDrive2.setStopping(brakeType::coast);
+  Intake.setStopping(brakeType::hold);
+  Intake2.setStopping(brakeType::hold);
+  
+  // Tray angle
+  float trayAngle = Tray.rotation(rotationUnits::deg);
+  
+  // Arm angle
+  float armAngle = Arm.rotation(rotationUnits::deg);
+  
+  // Motor speeds
+  LeftDrive1.setVelocity(100, velocityUnits::pct);
+  LeftDrive2.setVelocity(100, velocityUnits::pct);
+  RightDrive1.setVelocity(100, velocityUnits::pct);
+  RightDrive2.setVelocity(100, velocityUnits::pct);
+  Intake.setVelocity(100, velocityUnits::pct);
+  Intake2.setVelocity(100, velocityUnits::pct);
+  Tray.setVelocity(50, velocityUnits::pct);
+  Arm.setVelocity(100, velocityUnits::pct);
+
+  //Intake
+  if(Controller1.ButtonR1.pressing()) {
+   Intake.spin(directionType::fwd);
+   Intake2.spin(directionType::fwd);
+  }
+  else if(Controller1.ButtonR2.pressing()) {
+   Intake.spin(directionType::rev);
+   Intake2.spin(directionType::rev);
+  }
+  else {
+    Intake.stop(brakeType::hold);
+    Intake2.stop(brakeType::hold);
+  }
+  //Tray
+  /*if(angle <= 0) {
+   if(Controller1.ButtonL1.pressing()) {
+    Tray.spin(directionType::fwd);
+   }
+   else if(Controller1.ButtonL2.pressing()) {
+    Tray.stop(brakeType::hold);
+   }
+   else {
+    Tray.stop(brakeType::hold);
+   }
+  }
+  else if(angle >= 900) {
+   if(Controller1.ButtonL1.pressing()) {
+    Tray.stop(brakeType::hold);
+   }
+   else if(Controller1.ButtonL2.pressing()) {
+    Tray.spin(directionType::rev);
+   }
+   else {
+    Tray.stop(brakeType::hold);
+   }
+  }
+  else {*/
+   if(Controller1.ButtonL1.pressing()) {
+    Tray.spin(directionType::fwd);
+   }
+   else if(Controller1.ButtonL2.pressing()) {
+    Tray.spin(directionType::rev);
+   }
+   else {
+    Tray.stop(brakeType::hold);
+   }
+  //}
+  // Arm
+  if(Controller1.ButtonX.pressing()) {
+   Arm.spin(directionType::fwd);
+  }
+  else if(Controller1.ButtonB.pressing()) {
+   Arm.spin(directionType::rev);
+  }
+  else {
+   Arm.stop(brakeType::hold);
+  }
+  // moving the tray back if the arm is up high
+  if((armAngle > 300) && (trayAngle < 900)) {
+   Tray.spin(directionType::fwd);
+  }
+  
+  if(driveTrainReversed) { 
+   LeftDrive1.spin(vex::directionType::fwd, (Controller1.Axis3.value() * 0.05), vex::velocityUnits::pct);
+   LeftDrive2.spin(vex::directionType::fwd, (Controller1.Axis3.value() * 0.05), vex::velocityUnits::pct);
+   RightDrive1.spin(vex::directionType::fwd, (Controller1.Axis3.value() * 0.05), vex::velocityUnits::pct);
+   RightDrive2.spin(vex::directionType::fwd, (Controller1.Axis3.value() * 0.05), vex::velocityUnits::pct);
+
+   /*Brain.Screen.clearScreen(color::purple);
+   Controller1.Screen.clearScreen();
+   Controller1.Screen.print("Arcade");*/
+  }
+  else {
+   // Tank Drive
+   LeftDrive1.spin(vex::directionType::fwd, Controller1.Axis3.value(), vex::velocityUnits::pct);
+   LeftDrive2.spin(vex::directionType::fwd, Controller1.Axis3.value(), vex::velocityUnits::pct);
+   RightDrive1.spin(vex::directionType::fwd, Controller1.Axis2.value(), vex::velocityUnits::pct);
+   RightDrive2.spin(vex::directionType::fwd, Controller1.Axis2.value(), vex::velocityUnits::pct);
+  
+   /*Brain.Screen.clearScreen(color::red);
+   Controller1.Screen.clearScreen();
+   Controller1.Screen.print("Tank");*/
+  }
+
+  //Countdown to the recording
+  if(downPressed == false) {
+  if(startedRecordingTimer) {
+    if((recordingTime < 1000) && (upPressed == true) && (startedRecording == false)) {
+      Controller1.Screen.clearScreen();
+      Controller1.Screen.print("3...");
+   }
+   else if((1000 < recordingTime) && (recordingTime < 2000) && (upPressed == true)) {
+      Controller1.Screen.clearScreen();
+      Controller1.Screen.print("3...2...");
+   }
+   else if((2000 < recordingTime) && (recordingTime < 3000) && (upPressed == true)) {
+      Controller1.Screen.clearScreen();
+      Controller1.Screen.print("3...2...1...");
+   }
+   else if((recordingTime > 3000) && (upPressed == true) && (startedRecording == false)) {
+      Controller1.Screen.clearScreen();
+      Controller1.Screen.print("Recording");
+      Brain.resetTimer();
+      startedRecording = !startedRecording;
+   }
+  }
+  }
+  else if(downPressed == true) {
+    // stop the recording
+    Controller1.Screen.clearScreen();
+    Controller1.Screen.print("Stopped Recording");
+  }
+
+  // Loop once the recording starts
+  if((recordingTime >= 50) && (startedRecording == true)) {
+    loopNumber++;
+ 
+    cout << "Loop Number:\n" << loopNumber << endl;
+
+  
+    Brain.resetTimer();
+    Brain.Screen.clearScreen();
+    Brain.Screen.printAt(3, 140, "Loop: %d", loopNumber);
+  }
+  
+  // Once the recording starts, reset the timer every 50 miliseconds
+	// Sleep the task for a short amount of time to prevent wasted resources.
+    vex::task::sleep(20);  
+  
+}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+// ++-- MAIN --++
+// Main will set up the competition functions and callbacks.
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+int main() {
+  
+    // Set up callbacks for autonomous and driver control periods.
+    Competition.autonomous( autonomous );
+    Competition.drivercontrol( usercontrol );
+    
+    // Run the pre-autonomous function. 
+    pre_auton();
+       
+    // Prevent main from exiting with an infinite loop.                        
+    while(true) {
+	  // Sleep the task for a short amount of time to prevent wasted resources.
+      vex::task::sleep(100);
+    }    
+       
+}
