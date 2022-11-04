@@ -29,13 +29,12 @@ int main() {
   // Deadband stops the motors when Axis values are close to zero.
   int deadband = 5;
 
-  while (true) {
+  while (true) 
+  {
     // Get the velocity percentage of the left motor. (Axis2 + Axis1)
-    int leftMotorSpeed =
-        Controller1.Axis2.position() + Controller1.Axis1.position();
+    int leftMotorSpeed = Controller1.Axis2.position() + Controller1.Axis1.position();
     // Get the velocity percentage of the right motor. (Axis2 - Axis1)
-    int rightMotorSpeed =
-        Controller1.Axis2.position() - Controller1.Axis1.position();
+    int rightMotorSpeed = Controller1.Axis2.position() - Controller1.Axis1.position();
 
     // Set the speed of the left motor. If the value is less than the deadband,
     // set it to zero.
