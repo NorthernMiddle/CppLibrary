@@ -59,11 +59,35 @@ void pidBaseControl(double target)
 }
 
 
+/**
+  * 
+  *
+  * 
+  */
+void resetDriveEncoders()
+{
+  nMotorEncoder[LeftBase] = 0;
+  nMotorEncoder[RightBase] = 0;
+}
+
+
 //////////////////////////////////
 //
 // P : PROPORTION
 //
 ///////////////////////////////////////////////
+void proportion()
+{
+    int error;
+    int porportion;
+    double Kp = 0.2
+        
+    while ( true )
+    {
+        error
+
+}
+
 
 
 //////////////////////////////////
