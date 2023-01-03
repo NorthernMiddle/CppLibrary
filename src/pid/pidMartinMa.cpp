@@ -15,7 +15,7 @@ using namespace vex;
 /**
  * Converts inches to quadrature encoder ticks, for the purpose of setting targets in PIDs
  * Usage:
- *  inchesToTicks(10, 3.25, 1, TURBO);
+ *  inchesToTicks(10, 3.25, 1, BLUE_MOTOR_CARTRIDGE);
  *
  * @param float unit The number inches to convert to ticks
  * @param float wheelDiameter The diameter of the wheel, in inches
