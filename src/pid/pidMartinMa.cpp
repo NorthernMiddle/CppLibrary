@@ -3,10 +3,13 @@
 #include "vex.h"
 using namespace vex;
 
-/** Define Motor Gearings **/
+// define Motor Gearing
 #define VEX393Torque    627.2
 #define VEX393Standard  392.0
 #define VEX393Turbo     261.333
+
+// define PI
+#define PI = 3.14159265359;
 
 /**
   * 
