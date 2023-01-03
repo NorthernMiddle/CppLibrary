@@ -11,7 +11,7 @@ using namespace vex;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  PID is a way to move some distance or turn to some angle.
+//  PID is used to accuractely move & turn some distance
 //
 //  The distance or angle from a target is called error.
 //  To reduce error precisely, PID uses three variables to calculate speed.
@@ -78,14 +78,17 @@ double fwdPIDCycle(double targetDist, double maxSpeed)
     speed =  keepInRange(speed, -maxSpeed, maxSpeed); // Restrict the absolute value of speed to the maximum allowed value
 
     // make sure speed is always enough to overcome steady-state error
-    if (speed > 0 && speed < 2) {
+    if (speed > 0 && speed < 2) 
+    {
       speed = 2;
-    } if (speed < 0 && speed > -2) {
+    } 
+    if (speed < 0 && speed > -2) 
+    {
       speed = -2;
     }
 
   Brain.Screen.printAt(210, 140, "P: %.1f, I: %.1f, D: %.1f    ", (Kp * fwd_error), (Ki * fwd_integral), (Kd * fwd_derivative));
-  //Brain.Screen.printAt(210, 120, "%f  ", fwd_error - fwd_lastError);
+  // Brain.Screen.printAt(210, 120, "%f  ", fwd_error - fwd_lastError);
   }
   else
   {
@@ -115,8 +118,10 @@ double turnPIDCycle(double targetDegree, double maxSpeed)
 
   turn_error = targetDegree - getRotationDeg();   // The error is the relative angle to the target angle
 
-  if (fabs(turn_error) > errorThreshold){
-    if (fabs(turn_error) < integralActiveZone) {
+  if (fabs(turn_error) > errorThreshold)
+  {
+    if (fabs(turn_error) < integralActiveZone) 
+    {
       turn_integral = turn_integral + turn_error;
     } 
     else 
@@ -154,7 +159,8 @@ void forwardPID(double targetInches, double maxSpeed, int timeoutMillis = -1){  
 
   resetTotalDistance();
   // While time isn't up or time isn't set (default value of -1)
-  while (speed != 0 && (Timer.time() < timeoutMillis || timeoutMillis == -1)){
+  while (speed != 0 && (Timer.time() < timeoutMillis || timeoutMillis == -1))
+  {
     double currentDist = targetInches - getTotalDistance(); // calculate the distance from target
     
     speed = fwdPIDCycle(currentDist, maxSpeed); // plug in distance and speed into PID
