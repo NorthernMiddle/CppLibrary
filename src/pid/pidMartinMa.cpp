@@ -13,18 +13,6 @@ using namespace vex;
 
 
 /**
-  * 
-  *
-  * 
-  */
-void moveBase(double speed)
-{
-  SmartDrive.setDriveVelocity( speed, velocityUnits::rpm );
-}
-
-
-
-/**
  * Converts inches to quadrature encoder ticks, for the purpose of setting targets in PIDs
  * Usage:
  *  inchesToTicks(10, 3.25, 1, TURBO);
@@ -42,14 +30,21 @@ float inchesToTicks(float unit, float wheelDiameter, float gearing, float motorG
     ) * 360; // 360 ticks in a rotation
 }
 
+
 /**
   * 
-  * reading: ticks -- 393 motors: VEX393Torque -- 627.2 ticks/rev
-  * 1 turn of wheels -- 4 inch wheels -- 627.2 * 2ticks
-  * 1 turn of each wheel 4*PI inches
-  * 4*PI inches = 627.2 * 2ticks
   *
-  * ticks/inch = (627.2 * 2) / (4 * PI) = 99.82198
+  * 
+  */
+void moveBase(double speed)
+{
+  SmartDrive.setDriveVelocity( speed, velocityUnits::rpm );
+}
+
+
+/**
+  * 
+  *
   * 
   */
 void pidBaseControl(double target)
@@ -62,6 +57,8 @@ void pidBaseControl(double target)
     wait( 40, msec );
   }
 }
+
+
 
 //////////////////////////////////
 //
